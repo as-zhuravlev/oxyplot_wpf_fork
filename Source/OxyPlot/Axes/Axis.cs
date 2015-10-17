@@ -11,13 +11,13 @@ namespace OxyPlot.Axes
 {
     using System;
     using System.Collections.Generic;
-
+    using System.ComponentModel;
     using OxyPlot.Series;
 
     /// <summary>
     /// Provides an abstract base class for axes.
     /// </summary>
-    public abstract class Axis : PlotElement
+    public abstract class Axis : PlotElement, INotifyPropertyChanged
     {
         /// <summary>
         /// Exponent function.
@@ -43,6 +43,24 @@ namespace OxyPlot.Axes
         /// The position of the axis.
         /// </summary>
         private AxisPosition position;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Axis" /> class.
@@ -143,21 +161,38 @@ namespace OxyPlot.Axes
         /// </summary>
         public double ActualMajorStep { get; protected set; }
 
+
+        double _actualMaximum;
+        
+        /// <summary>
+        /// Gets or sets the maximum value of the axis. The default value is <c>double.NaN</c>.
+        /// </summary>
         /// <summary>
         /// Gets or sets the actual maximum value of the axis.
         /// </summary>
         /// <remarks>If <see cref="ViewMaximum" /> is not <c>NaN</c>, this value will be defined by <see cref="ViewMaximum" />.
         /// Otherwise, if <see cref="Maximum" /> is not <c>NaN</c>, this value will be defined by <see cref="Maximum" />.
         /// Otherwise, this value will be defined by the maximum (+padding) of the data.</remarks>
-        public double ActualMaximum { get; protected set; }
+        public double ActualMaximum
+        {
+            get { return _actualMaximum; }
+            protected set { SetField(ref _actualMaximum, value, "ActualMaximum"); }
+        }
 
+
+        double _actualMinimum;
+       
         /// <summary>
         /// Gets or sets the actual minimum value of the axis.
         /// </summary>
         /// <remarks>If <see cref="ViewMinimum" /> is not <c>NaN</c>, this value will be defined by <see cref="ViewMinimum" />.
         /// Otherwise, if <see cref="Minimum" /> is not <c>NaN</c>, this value will be defined by <see cref="Minimum" />.
         /// Otherwise this value will be defined by the minimum (+padding) of the data.</remarks>
-        public double ActualMinimum { get; protected set; }
+        public double ActualMinimum
+        {
+            get { return _actualMinimum; }
+            protected set { SetField(ref _actualMinimum, value, "ActualMinimum"); }
+        }
 
         /// <summary>
         /// Gets or sets the actual minor step.
@@ -350,10 +385,12 @@ namespace OxyPlot.Axes
         /// </summary>
         public double MajorTickSize { get; set; }
 
+
+
         /// <summary>
         /// Gets or sets the maximum value of the axis. The default value is <c>double.NaN</c>.
         /// </summary>
-        public double Maximum { get; set; }
+        public double Maximum{get; set;}
 
         /// <summary>
         /// Gets or sets the 'padding' fraction of the maximum value. The default value is <c>0.01</c>.

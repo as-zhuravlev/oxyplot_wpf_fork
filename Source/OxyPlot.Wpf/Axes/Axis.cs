@@ -28,6 +28,14 @@ namespace OxyPlot.Wpf
                 typeof(Axis),
                 new PropertyMetadata(double.MaxValue, AppearanceChanged));
 
+        public static readonly DependencyProperty ActualMaximumProperty =
+            DependencyProperty.Register(
+                "ActualMaximum",
+                typeof(double),
+                typeof(Axis),
+                new PropertyMetadata(10.0, AppearanceChanged));
+
+
         /// <summary>
         /// Identifies the <see cref="AbsoluteMinimum"/> dependency property.
         /// </summary>
@@ -442,6 +450,21 @@ namespace OxyPlot.Wpf
                 this.SetValue(AbsoluteMaximumProperty, value);
             }
         }
+
+        //public double ActualMaximum
+        //{
+        //    get
+        //    {
+        //        return (double)this.GetValue(ActualMaximumProperty);
+        //    }
+        //
+        //    set
+        //    {
+        //        //this.SetValue(AbsoluteMaximumProperty, value);
+        //    }
+        //}
+
+
 
         /// <summary>
         /// Gets or sets the absolute minimum. This is only used for the UI control. It will not be possible to zoom/pan beyond this limit.
